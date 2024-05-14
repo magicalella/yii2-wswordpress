@@ -103,7 +103,7 @@ class Wswordpress extends Component
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        //curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'Accept: application/json, application/json',
                 'Content-Type: application/json;charset=UTF-8'
@@ -111,20 +111,23 @@ class Wswordpress extends Component
                 //'Content-Length: ' . strlen($data)
             )
         );
-        $response = curl_exec($ch);
+        $dati = curl_exec($ch);
         $curl_info = curl_getinfo($ch);
         $error = curl_error($ch);
         if($error){
             $status = self::STATUS_ERROR;
         }
         curl_close($ch);
-        
+        $response = [
+            'status' => $status,
+            'data' => $dati
+        ];
         return $response;
     }
 }
 
 /**
- * @package BridgePS
+ * @package BridgeWP
  */
 class WswordpressException extends Exception
 {
