@@ -67,7 +67,7 @@ class Wswordpress extends Component
      *      message
      *      data dati della risposta formato json
      */
-    public function call($call, $method, $data = [])
+    public function call($call, $method = 'GET', $data = [])
     {
         // $data = array_merge(
         //     array(
