@@ -10,7 +10,7 @@
  Run
  
  ```
- composer require "magicalella/yii2-wswordpress" "*"
+ php composer.phar require magicalella/yii2-wswordpress 
  ```
  
  or add
@@ -29,7 +29,7 @@
  'components' => [
      // ...
      'wswordpress' => [
-         'class' => 'magicalella\wswordpress\WsWordpress',
+         'class' => 'magicalella\wswordpress\Wswordpress',
          'endpoint' => 'URL API Wordpress',
          'method' => 'GET'
      ],

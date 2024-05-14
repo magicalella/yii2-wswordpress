@@ -7,13 +7,13 @@ use yii\base\InvalidConfigException;
 use yii\base\Exception;
 
 /**
- * Class WsWordpress
- * WsWordpress component
+ * Class Wswordpress
+ * Wswordpress component
  * @package magicalella\wswordpress
  *
  * @author Raffaella Lollini
  */
-class WsWordpress extends Component
+class Wswordpress extends Component
 {
 
     /**
@@ -59,7 +59,7 @@ class WsWordpress extends Component
     }
 
     /**
-     * Call WsWordpress function
+     * Call Wswordpress function
      * @param string $call Name of API function to call
      * @param array $data
      * @return response []
@@ -126,6 +126,6 @@ class WsWordpress extends Component
 /**
  * @package BridgePS
  */
-class WsWordpressException extends Exception
+class WswordpressException extends Exception
 {
 }
