@@ -1,6 +1,8 @@
 # yii2-wswordpress
  Modulo per integrare la  Yii con Wordpress
  
+ Documentazione API WP
+ https://developer.wordpress.org/rest-api/
  
  Installation
  ------------
