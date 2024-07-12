@@ -32,6 +32,10 @@ class Wswordpress extends Component
      */
     public $method;
     
+    //for Woocommerce
+    public $consumer_key;
+    public $consumer_secret;
+    
     const STATUS_SUCCESS = true;
     const STATUS_ERROR = false;
 
@@ -61,13 +65,15 @@ class Wswordpress extends Component
     /**
      * Call Wswordpress function
      * @param string $call Name of API function to call
+     * @param string $method
      * @param array $data
+     * @param $woocommerce true/false
      * @return response []
      *      status 0/1 success o error
      *      message
      *      data dati della risposta formato json
      */
-    public function call($call, $method = 'GET', $data = [])
+    public function call($call, $method = 'GET', $data = [] , $woocommerce = false)
     {
         // $data = array_merge(
         //     array(
@@ -80,36 +86,42 @@ class Wswordpress extends Component
         // );
         $json = json_encode($data);
         //print_r($json);
-        $response = $this->curl($this->endpoint.$call, $json, $method);
+        $response = $this->curl($this->endpoint.$call, $json, $method ,$woocommerce);
         $response['data'] = json_decode($response['data']);
         return $response;
     }
 
     /**
      * Do request by CURL
-     * @param $url ex: https://api.connectif.cloud/purchases/
+     * @param $url ex: https://www.mysite.com/wp-json
      * @param $data
      * @param $method
+     * @param $woocommerce true/false
      * @return response []
      *      status 0/1 success o error
      *      message
      *      data dati della risposta formato json 
      */
-    private function curl($url, $data, $method = 'GET')
+    private function curl($url, $data, $method = 'GET',$woocommerce = false)
     {
         $response = [];
         $status = self::STATUS_SUCCESS;
+        $header = [
+            'Accept: application/json',
+            'Content-Type: application/json;charset=UTF-8'
+        ];
+        if($woocommerce){
+            $base64 = base64_encode($this->consumer_key.':'.$this->consumer_secret);
+            $wooheader = ['Authorization: Basic '.$base64];
+            $header = array_merge($header,$wooheader);
+        }
+       
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         //curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'Accept: application/json, application/json',
-                'Content-Type: application/json;charset=UTF-8'
-                //'Authorization: apiKey '.$this->apiKey
-                //'Content-Length: ' . strlen($data)
-            )
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header
         );
         $dati = curl_exec($ch);
         $curl_info = curl_getinfo($ch);
