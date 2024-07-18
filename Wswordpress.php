@@ -2,6 +2,7 @@
 
 namespace magicalella\wswordpress;
 
+use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\base\Exception;
@@ -38,6 +39,14 @@ class Wswordpress extends Component
     
     const STATUS_SUCCESS = true;
     const STATUS_ERROR = false;
+    const INVALID_ARGUMENT = '400';//messaggio non valido anche per lunghezza
+    const ELEMENTO_NON_TROVATO = '404';//elemento non trovato
+
+    const THIRD_PARTY_AUTH_ERROR = '401';//APNs certificate or web push auth key was invalid or missing.
+    const SENDER_ID_MISMATCH = '403';//stai sbagliando credenziali
+    const QUOTA_EXCEEDED = '429';//superamento numero messaggi inviabili
+    const INTERNAL = '500';//errore server firebase 
+    const UNAVAILABLE = '503';//server overload non raggiungibile
 
 
     /**
@@ -75,6 +84,8 @@ class Wswordpress extends Component
      */
     public function call($call, $method = 'GET', $data = [] , $woocommerce = false)
     {
+        $status = SELF::STATUS_SUCCESS;
+        $message = '';
         // $data = array_merge(
         //     array(
         //         'apiKey' => $this->apiKey,
@@ -87,8 +98,30 @@ class Wswordpress extends Component
         $json = json_encode($data);
         //print_r($json);
         $response = $this->curl($this->endpoint.$call, $json, $method ,$woocommerce);
-        $response['data'] = json_decode($response['data']);
-        return $response;
+        $data_response = json_decode($response['data']);
+        /* ERRORE in $data_response = [
+        *    code se errore
+        *    message se errore
+        *    data [
+        *        status / array dati
+        *    ]
+        *]
+        * OK $data_response = [
+        *    array dati
+        *]
+        */
+        
+        if(key_exists('code', $data_response)){
+            $status = SELF::STATUS_ERROR;
+            $message = $data_response->code.' - '.$data_response->data->status.' - '.$data_response->message;
+            Yii::error(sprintf('ERRORE WP:  errore chiamata WP: %s  ', $message), __METHOD__);
+    }
+
+        return $response = [
+            'data' => $data_response,
+            'status' => $status,
+            'message' => $message
+        ];
     }
 
     /**
