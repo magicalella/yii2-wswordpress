@@ -31,9 +31,11 @@
  'components' => [
      // ...
      'wswordpress' => [
-         'class' => 'magicalella\wswordpress\Wswordpress',
-         'endpoint' => 'URL API Wordpress',
-         'method' => 'GET'
+          'class' => 'magicalella\wswordpress\Wswordpress',
+          'endpoint' => 'https://miosito.it/wp-json/',
+          'method' => 'GET',
+          'consumer_key' => 'ck_xxx',//for Woocommerce
+          'consumer_secret' => 'cs_xxx'//for Woocommerce
      ],
  ]
  ```
