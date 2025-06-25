@@ -110,12 +110,17 @@ class Wswordpress extends Component
         *    array dati
         *]
         */
-        
-        if(key_exists('code', $data_response)){
+        if(is_array($data_response)){
+            if(!empty($data_response) && key_exists('code', $data_response)){
             $status = SELF::STATUS_ERROR;
             $message = $data_response->code.' - '.$data_response->data->status.' - '.$data_response->message;
             Yii::error(sprintf('ERRORE WP:  errore chiamata WP: %s  ', $message), __METHOD__);
     }
+        }else{
+            $message =  $response['data'];
+            $status = SELF::STATUS_ERROR;
+            Yii::error(sprintf('ERRORE WP:  errore chiamata WP: %s  ', $message), __METHOD__);
+        }
 
         return $response = [
             'data' => $data_response,
@@ -141,7 +146,8 @@ class Wswordpress extends Component
         $status = self::STATUS_SUCCESS;
         $header = [
             'Accept: application/json',
-            'Content-Type: application/json;charset=UTF-8'
+            'Content-Type: application/json;charset=UTF-8',
+            'User-Agent: Override'
         ];
         if($woocommerce){
             $base64 = base64_encode($this->consumer_key.':'.$this->consumer_secret);
@@ -151,6 +157,7 @@ class Wswordpress extends Component
        
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        if(!empty($data))
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         //curl_setopt($ch, CURLOPT_HEADER, 1);
